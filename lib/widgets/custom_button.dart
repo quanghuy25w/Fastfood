@@ -23,9 +23,9 @@ class CustomButton extends StatefulWidget {
     this.trailingIcon,
     this.fullWidth = false,
     this.width,
-    this.height = 54,
+    this.height = 56,
     this.padding,
-    this.borderRadius = 18,
+    this.borderRadius = 20,
     this.textStyle,
     this.backgroundColor,
     this.foregroundColor,
@@ -43,9 +43,9 @@ class CustomButton extends StatefulWidget {
     this.trailingIcon,
     this.fullWidth = false,
     this.width,
-    this.height = 54,
+    this.height = 56,
     this.padding,
-    this.borderRadius = 18,
+    this.borderRadius = 20,
     this.textStyle,
     this.backgroundColor,
     this.foregroundColor,
@@ -63,9 +63,9 @@ class CustomButton extends StatefulWidget {
     this.trailingIcon,
     this.fullWidth = false,
     this.width,
-    this.height = 54,
+    this.height = 56,
     this.padding,
-    this.borderRadius = 18,
+    this.borderRadius = 20,
     this.textStyle,
     this.backgroundColor,
     this.foregroundColor,
@@ -83,9 +83,9 @@ class CustomButton extends StatefulWidget {
     this.trailingIcon,
     this.fullWidth = false,
     this.width,
-    this.height = 54,
+    this.height = 56,
     this.padding,
-    this.borderRadius = 18,
+    this.borderRadius = 20,
     this.textStyle,
     this.backgroundColor,
     this.foregroundColor,
@@ -172,10 +172,14 @@ class _CustomButtonState extends State<CustomButton> {
               });
             },
       child: AnimatedScale(
-        scale: _isPressed ? 0.98 : 1,
-        duration: const Duration(milliseconds: 110),
-        curve: Curves.easeOut,
-        child: SizedBox(width: targetWidth, height: widget.height, child: button),
+        scale: _isPressed ? 0.96 : 1,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeInOut,
+        child: SizedBox(
+          width: targetWidth,
+          height: widget.height,
+          child: button,
+        ),
       ),
     );
   }
@@ -186,7 +190,10 @@ class _CustomButtonState extends State<CustomButton> {
 
     final effectiveTextStyle =
         widget.textStyle ??
-        theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700);
+        theme.textTheme.labelLarge?.copyWith(
+          fontWeight: FontWeight.w700,
+          fontSize: 16,
+        );
 
     if (widget.isLoading) {
       final indicatorColor =
@@ -194,10 +201,10 @@ class _CustomButtonState extends State<CustomButton> {
       final indicator =
           widget.loadingIndicator ??
           SizedBox(
-            width: 18,
-            height: 18,
+            width: 20,
+            height: 20,
             child: CircularProgressIndicator(
-              strokeWidth: 2,
+              strokeWidth: 2.5,
               valueColor: AlwaysStoppedAnimation<Color>(indicatorColor),
             ),
           );
@@ -206,7 +213,7 @@ class _CustomButtonState extends State<CustomButton> {
         mainAxisSize: MainAxisSize.min,
         children: [
           indicator,
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Text(widget.text, style: effectiveTextStyle),
         ],
       );
@@ -222,20 +229,24 @@ class _CustomButtonState extends State<CustomButton> {
         if (widget.leadingIcon != null) ...[
           IconTheme(
             data: IconThemeData(
-              size: 18,
-              color: widget.foregroundColor ?? _defaultForegroundColor(colorScheme),
+              size: 20,
+              color:
+                  widget.foregroundColor ??
+                  _defaultForegroundColor(colorScheme),
             ),
             child: widget.leadingIcon!,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
         ],
         Flexible(child: Text(widget.text, style: effectiveTextStyle)),
         if (widget.trailingIcon != null) ...[
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           IconTheme(
             data: IconThemeData(
-              size: 18,
-              color: widget.foregroundColor ?? _defaultForegroundColor(colorScheme),
+              size: 20,
+              color:
+                  widget.foregroundColor ??
+                  _defaultForegroundColor(colorScheme),
             ),
             child: widget.trailingIcon!,
           ),
@@ -261,15 +272,16 @@ class _CustomButtonState extends State<CustomButton> {
           ),
           padding:
               widget.padding ??
-              const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-          textStyle: theme.textTheme.labelLarge,
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          textStyle: theme.textTheme.labelLarge?.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
         );
       case AppButtonVariant.secondary:
         return ElevatedButton.styleFrom(
-          backgroundColor:
-              widget.backgroundColor ?? colorScheme.secondary,
-          foregroundColor:
-              widget.foregroundColor ?? colorScheme.onSecondary,
+          backgroundColor: widget.backgroundColor ?? colorScheme.secondary,
+          foregroundColor: widget.foregroundColor ?? colorScheme.onSecondary,
           disabledBackgroundColor: disabledBackground,
           disabledForegroundColor: disabledForeground,
           elevation: 0,
@@ -278,8 +290,11 @@ class _CustomButtonState extends State<CustomButton> {
           ),
           padding:
               widget.padding ??
-              const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-          textStyle: theme.textTheme.labelLarge,
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          textStyle: theme.textTheme.labelLarge?.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
         );
       case AppButtonVariant.outline:
         return OutlinedButton.styleFrom(
@@ -291,8 +306,11 @@ class _CustomButtonState extends State<CustomButton> {
           ),
           padding:
               widget.padding ??
-              const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-          textStyle: theme.textTheme.labelLarge,
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          textStyle: theme.textTheme.labelLarge?.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
         );
     }
   }

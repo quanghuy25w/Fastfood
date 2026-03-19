@@ -67,7 +67,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final addressProvider = context.read<AddressProvider>();
 
     if (AppHelpers.isNullOrEmptyList(cartProvider.items)) {
-      AppHelpers.showWarningSnackBar(context, 'Gio hang dang trong');
+      AppHelpers.showWarningSnackBar(context, 'Giỏ hàng đang trống');
       return;
     }
 
@@ -75,7 +75,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     if (checkoutAddress == null) {
       AppHelpers.showWarningSnackBar(
         context,
-        'Vui long chon dia chi giao hang',
+        'Vui lòng chọn địa chỉ giao hàng',
       );
       return;
     }
@@ -106,7 +106,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         return;
       }
 
-      AppHelpers.showSuccessSnackBar(context, 'Thanh toan thanh cong');
+      AppHelpers.showSuccessSnackBar(context, 'Thanh toán thành công');
       AppHelpers.popToRoot(context);
     } catch (e) {
       if (!mounted) {
@@ -116,7 +116,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final errorMessage = AppHelpers.parseErrorMessage(e);
       AppHelpers.showErrorSnackBar(
         context,
-        'Thanh toan that bai: $errorMessage',
+        'Thanh toán thất bại: $errorMessage',
       );
     } finally {
       if (mounted) {
@@ -130,6 +130,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final theme = Theme.of(context);
     final cartProvider = context.watch<CartProvider>();
     final addressProvider = context.watch<AddressProvider>();
 
@@ -139,10 +140,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final resolvedAddress = _resolveSelectedAddress(addressProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Checkout')),
+      appBar: AppBar(title: const Text('Thanh toán')),
       body: LoadingOverlay(
         isLoading: _isLoading,
-        message: 'Dang xu ly thanh toan...',
+        message: 'Đang xử lý thanh toán...',
         child: items.isEmpty
             ? Center(
                 child: Padding(
@@ -151,39 +152,45 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        Icons.remove_shopping_cart_outlined,
-                        size: 52,
+                        Icons.shopping_cart_outlined,
+                        size: 56,
                         color: colors.textSecondary,
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                       Text(
-                        'Chua co san pham trong gio',
-                        style: Theme.of(context).textTheme.titleMedium,
+                        'Giỏ hàng trống',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ],
                   ),
                 ),
               )
             : ListView(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 120),
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 150),
                 children: [
+                  // Address section
                   _CheckoutSection(
-                    title: 'Dia chi giao hang',
-                    actionLabel: 'Doi dia chi',
+                    title: 'Địa chỉ giao hàng',
+                    actionLabel: 'Th᪪y đổi',
                     onActionTap: _isLoading ? null : _openAddressSelector,
                     child: addresses.isEmpty
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Chua co dia chi giao hang'),
-                              const SizedBox(height: 10),
+                              const Text('Chúa có địa chỉ giao hàng'),
+                              const SizedBox(height: 12),
                               CustomButton.secondary(
-                                text: 'Them dia chi',
-                                onPressed: _isLoading ? null : _openAddressSelector,
+                                text: 'Thêm địa chỉ',
+                                onPressed: _isLoading
+                                    ? null
+                                    : _openAddressSelector,
                                 width: 160,
                                 height: 44,
-                                leadingIcon:
-                                    const Icon(Icons.add_location_alt_outlined),
+                                leadingIcon: const Icon(
+                                  Icons.add_location_alt_outlined,
+                                ),
                               ),
                             ],
                           )
@@ -192,40 +199,48 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             onTap: _isLoading ? null : _openAddressSelector,
                           ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
+                  // Items section
                   _CheckoutSection(
-                    title: 'Mon da chon (${items.length})',
+                    title: '${items.length} món đã chọn',
                     child: Column(
                       children: items.map((item) {
                         return Padding(
                           padding: EdgeInsets.only(
-                            bottom: item == items.last ? 0 : 10,
+                            bottom: item == items.last ? 0 : 12,
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              CircleAvatar(
-                                radius: 18,
-                                backgroundColor: colors.secondaryContainer,
+                              Container(
+                                width: 56,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  color: colors.secondaryContainer,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                                 child: Icon(
                                   Icons.fastfood_rounded,
                                   color: colors.iconAccent,
-                                  size: 18,
+                                  size: 24,
                                 ),
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       item.name,
-                                      style: Theme.of(context).textTheme.titleSmall,
+                                      style: theme.textTheme.titleSmall
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                          ),
                                     ),
-                                    const SizedBox(height: 2),
+                                    const SizedBox(height: 4),
                                     Text(
-                                      '${AppFormatters.formatCurrency(item.price)} x ${item.quantity}',
-                                      style: Theme.of(context).textTheme.bodyMedium,
+                                      '${AppFormatters.formatCurrency(item.price)} × ${item.quantity}',
+                                      style: theme.textTheme.bodyMedium,
                                     ),
                                   ],
                                 ),
@@ -233,7 +248,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               const SizedBox(width: 10),
                               Text(
                                 AppFormatters.formatCurrency(item.subtotal),
-                                style: Theme.of(context).textTheme.titleSmall,
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: colors.primary,
+                                ),
                               ),
                             ],
                           ),
@@ -241,18 +259,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       }).toList(),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
+                  // Total section
                   _CheckoutSection(
-                    title: 'Tong thanh toan',
-                    child: Row(
+                    title: 'Tổng thanh toán',
+                    child: Column(
                       children: [
-                        const Expanded(child: Text('Tong cong')),
-                        Text(
-                          AppFormatters.formatCurrency(totalPrice),
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: colors.primary,
-                            fontWeight: FontWeight.w800,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Tổng cộng', style: theme.textTheme.bodyLarge),
+                            Text(
+                              AppFormatters.formatCurrency(totalPrice),
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                color: colors.primary,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -263,19 +287,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       bottomNavigationBar: SafeArea(
         top: false,
         child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: theme.cardColor,
             boxShadow: [
               BoxShadow(
                 color: colors.shadow,
-                blurRadius: 10,
-                offset: const Offset(0, -2),
+                blurRadius: 12,
+                offset: const Offset(0, -4),
               ),
             ],
           ),
           child: CustomButton.primary(
-            text: 'Xac nhan thanh toan',
+            text: 'Xác nhận thanh toán',
             onPressed: _handleCheckout,
             enabled: !_isLoading && items.isNotEmpty,
             fullWidth: true,
@@ -303,11 +327,13 @@ class _CheckoutSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final theme = Theme.of(context);
 
     return Card(
       margin: EdgeInsets.zero,
+      elevation: 1.2,
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -316,7 +342,7 @@ class _CheckoutSection extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -326,14 +352,20 @@ class _CheckoutSection extends StatelessWidget {
                     onPressed: onActionTap,
                     style: TextButton.styleFrom(
                       foregroundColor: colors.primary,
-                      padding: EdgeInsets.zero,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
                       minimumSize: const Size(10, 10),
                     ),
-                    child: Text(actionLabel!),
+                    child: Text(
+                      actionLabel!,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: colors.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             child,
           ],
         ),
@@ -351,19 +383,25 @@ class _AddressTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final theme = Theme.of(context);
 
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          border: Border.all(color: colors.border),
-          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: colors.border.withValues(alpha: 0.5)),
+          borderRadius: BorderRadius.circular(14),
+          color: colors.surface,
         ),
         child: address == null
-            ? const Text('Vui long chon dia chi giao hang')
+            ? Text(
+                'Chọn địa chỉ giao hàng',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colors.textSecondary,
+                ),
+              )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -371,26 +409,46 @@ class _AddressTile extends StatelessWidget {
                     address!.recipientName.trim().isEmpty
                         ? 'Nguoi nhan'
                         : address!.recipientName,
-                    style: Theme.of(context).textTheme.titleSmall,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
                     AppFormatters.formatPhone(
                       address!.phone,
                       fallback: 'Chua cap nhat so dien thoai',
                     ),
+                    style: theme.textTheme.bodyMedium,
                   ),
-                  const SizedBox(height: 6),
-                  Text(address!.fullAddress),
+                  const SizedBox(height: 8),
+                  Text(
+                    address!.fullAddress,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
                   if (address!.label != null &&
-                      address!.label!.trim().isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Chip(
-                        label: Text(address!.label!.trim()),
-                        visualDensity: VisualDensity.compact,
+                      address!.label!.trim().isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colors.primaryContainer,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        address!.label!.trim(),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: colors.onPrimaryContainer,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
+                  ],
                 ],
               ),
       ),

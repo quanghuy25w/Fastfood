@@ -14,7 +14,7 @@ class SettingsScreen extends StatelessWidget {
     final themeProvider = context.watch<ThemeProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Cai dat')),
+      appBar: AppBar(title: const Text('Cài đặt')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -23,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
             child: SwitchListTile(
               value: themeProvider.isDarkMode,
               title: const Text('Dark Mode'),
-              subtitle: const Text('Bat giao dien toi de nhin de hon ban dem'),
+              subtitle: const Text('Bật giao diện tối để nhìn dễ hơn ban đêm'),
               activeColor: colors.secondary,
               onChanged: (_) {
                 context.read<ThemeProvider>().toggleTheme();
@@ -35,8 +35,8 @@ class SettingsScreen extends StatelessWidget {
             margin: EdgeInsets.zero,
             child: ListTile(
               leading: const Icon(Icons.location_on_outlined),
-              title: const Text('Quan ly dia chi giao hang'),
-              subtitle: const Text('Them, sua, xoa va chon dia chi mac dinh'),
+              title: const Text('Quản lý địa chỉ giao hàng'),
+              subtitle: const Text('Thêm, sửa, xoá và chọn địa chỉ mặc định'),
               trailing: const Icon(Icons.chevron_right),
               onTap: () {
                 Navigator.of(context).push(

@@ -72,7 +72,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(22),
                   gradient: LinearGradient(
-                    colors: [colors.primary, colors.primary.withValues(alpha: 0.84)],
+                    colors: [
+                      colors.primary,
+                      colors.primary.withValues(alpha: 0.84),
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -82,10 +85,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text(
                       'Welcome back',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: colors.onPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            color: colors.onPrimary,
+                            fontWeight: FontWeight.w800,
+                          ),
                     ),
                     const SizedBox(height: 6),
                     Text(
@@ -140,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () {
                             AppHelpers.pushNamed(context, AppRoutes.register);
                           },
-                          child: const Text('Chua co tai khoan? Dang ky'),
+                          child: const Text('Chúa có tài khoản? Đăng ký'),
                         ),
                       ],
                     ),

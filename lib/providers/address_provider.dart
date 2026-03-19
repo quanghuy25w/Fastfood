@@ -9,7 +9,7 @@ class AddressProvider extends ChangeNotifier {
 
   final AddressRepository _addressRepository;
 
-  // CRUD dia chi + update state tu dong.
+  // CRUD địa chỉ + update state tự động.
   List<Address> addresses = [];
   bool isLoading = false;
   String? errorMessage;
@@ -17,7 +17,7 @@ class AddressProvider extends ChangeNotifier {
   // selectedAddress cho CheckoutScreen.
   Address? selectedAddress;
 
-  /// Load dia chi tu DB va rebuild UI.
+  /// Load địa chỉ từ DB và rebuild UI.
   Future<void> fetchAddresses({int? preferredSelectedId}) async {
     isLoading = true;
     errorMessage = null;

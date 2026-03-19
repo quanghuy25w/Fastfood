@@ -109,17 +109,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
     final baseBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(widget.borderRadius),
-      borderSide: BorderSide(color: colorScheme.outline),
+      borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.3)),
     );
 
     final focusedBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(widget.borderRadius),
-      borderSide: BorderSide(color: colorScheme.primary, width: 1.6),
+      borderSide: BorderSide(color: colorScheme.primary, width: 2),
     );
 
     final errorBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(widget.borderRadius),
-      borderSide: BorderSide(color: colorScheme.error),
+      borderSide: BorderSide(color: colorScheme.error, width: 1.5),
     );
 
     // Reusable TextField standard for all form screens.
@@ -161,7 +161,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   });
                 },
                 icon: Icon(
-                  _isObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                  _isObscured
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
                 ),
               )
             : widget.suffixIcon,
@@ -170,13 +172,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
         fillColor: widget.fillColor ?? colorScheme.surface,
         contentPadding:
             widget.contentPadding ??
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: baseBorder,
         enabledBorder: baseBorder,
         focusedBorder: focusedBorder,
         errorBorder: errorBorder,
         focusedErrorBorder: errorBorder.copyWith(
-          borderSide: BorderSide(color: colorScheme.error, width: 1.4),
+          borderSide: BorderSide(color: colorScheme.error, width: 2),
         ),
       ),
     );

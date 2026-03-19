@@ -5,9 +5,9 @@ class PaymentService {
 
   static final PaymentService instance = PaymentService._();
 
-  /// Service xu ly thanh toan, mock hoac tich hop API that.
-  /// Tra ve trang thai thanh toan cho CheckoutScreen hoac Provider.
-  /// Tach biet logic thanh toan ra service rieng.
+  /// Service xử lý thanh toán, mock hoặc tích hợp API thật.
+  /// Trả về trạng thái thanh toán cho CheckoutScreen hoặc Provider.
+  /// Tách biệt logic thanh toán ra service riêng.
   Future<bool> processPayment(double amount, String paymentMethod) async {
     try {
       if (amount <= 0) {

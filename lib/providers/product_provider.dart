@@ -5,7 +5,7 @@ import '../data/repositories/product_repository.dart';
 
 class ProductProvider extends ChangeNotifier {
   ProductProvider({ProductRepository? repository})
-      : _repository = repository ?? ProductRepository();
+    : _repository = repository ?? ProductRepository();
 
   final ProductRepository _repository;
 
@@ -18,7 +18,7 @@ class ProductProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  /// Load danh sach san pham tu database va cap nhat UI.
+  /// Load danh sách sản phẩm từ database và cập nhật UI.
   Future<void> loadProducts() async {
     _isLoading = true;
     _errorMessage = null;
@@ -36,7 +36,7 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  /// Them san pham moi va cap nhat UI.
+  /// Thêm sản phẩm mới và cập nhật UI.
   Future<void> addProduct(Product product) async {
     _isLoading = true;
     _errorMessage = null;
@@ -53,7 +53,7 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  /// Cap nhat san pham va cap nhat UI.
+  /// Cập nhật sản phẩm và cập nhật UI.
   Future<void> updateProduct(Product product) async {
     _isLoading = true;
     _errorMessage = null;
@@ -70,7 +70,7 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  /// Xoa san pham khoi database va UI.
+  /// Xoá sản phẩm khỏi database và UI.
   Future<void> deleteProduct(int id) async {
     _isLoading = true;
     _errorMessage = null;
@@ -87,7 +87,7 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  /// Tim kiem/loc san pham theo tu khoa hoac categoryId.
+  /// Tìm kiếm/lọc sản phẩm theo từ khóa hoặc categoryId.
   void searchProducts(String keyword) {
     final query = keyword.trim().toLowerCase();
 
@@ -101,7 +101,8 @@ class ProductProvider extends ChangeNotifier {
 
     _products = _allProducts.where((product) {
       final matchName = product.name.toLowerCase().contains(query);
-      final matchCategory = categoryId != null && product.categoryId == categoryId;
+      final matchCategory =
+          categoryId != null && product.categoryId == categoryId;
       return matchName || matchCategory;
     }).toList();
 

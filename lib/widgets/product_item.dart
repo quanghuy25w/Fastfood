@@ -5,12 +5,7 @@ import '../core/utils/formatters.dart';
 import '../data/models/product_model.dart';
 
 class ProductItem extends StatelessWidget {
-  const ProductItem({
-    super.key,
-    required this.product,
-    this.onTap,
-    this.onAdd,
-  });
+  const ProductItem({super.key, required this.product, this.onTap, this.onAdd});
 
   final Product product;
   final VoidCallback? onTap;
@@ -22,93 +17,121 @@ class ProductItem extends StatelessWidget {
     final image = product.image?.trim() ?? '';
     final hasNetworkImage =
         image.startsWith('http://') || image.startsWith('https://');
+    final theme = Theme.of(context);
 
-    return Card(
-      margin: EdgeInsets.zero,
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        margin: EdgeInsets.zero,
+        clipBehavior: Clip.antiAlias,
+        elevation: 1.2,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Image section (60% of height)
             Expanded(
-              flex: 6,
+              flex: 60,
               child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  color: colors.secondaryContainer,
+                decoration: BoxDecoration(color: colors.secondaryContainer),
+                child: Stack(
+                  children: [
+                    hasNetworkImage
+                        ? Image.network(
+                            image,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return _PlaceholderImage(colors: colors);
+                            },
+                          )
+                        : _PlaceholderImage(colors: colors),
+                  ],
                 ),
-                child: hasNetworkImage
-                    ? Image.network(
-                        image,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return _PlaceholderImage(colors: colors);
-                        },
-                      )
-                    : _PlaceholderImage(colors: colors),
               ),
             ),
+            // Content section (40% of height)
             Expanded(
-              flex: 4,
+              flex: 40,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      product.name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium,
+                    // Name and category
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              height: 1.2,
+                            ),
+                          ),
+                          if (product.categoryId != null) ...[
+                            const SizedBox(height: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colors.primaryContainer,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'Danh mục ${product.categoryId}',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  fontSize: 11,
+                                  color: colors.onPrimaryContainer,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 4),
-                    if (product.categoryId != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colors.primaryContainer,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          'Category ${product.categoryId}',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      )
-                    else
-                      const SizedBox(height: 18),
-                    const Spacer(),
+                    // Price and add button
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           child: Text(
                             AppFormatters.formatCurrency(product.price),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  color: colors.primary,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              color: colors.primary,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Material(
-                          color: colors.primary,
-                          shape: const CircleBorder(),
-                          child: InkWell(
-                            customBorder: const CircleBorder(),
-                            onTap: onAdd,
-                            child: SizedBox(
-                              width: 34,
-                              height: 34,
-                              child: Icon(
-                                Icons.add,
-                                color: colors.onPrimary,
-                                size: 20,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: colors.primary,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: onAdd,
+                              customBorder: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: SizedBox(
+                                width: 38,
+                                height: 38,
+                                child: Icon(
+                                  Icons.add,
+                                  color: colors.onPrimary,
+                                  size: 20,
+                                ),
                               ),
                             ),
                           ),
@@ -134,11 +157,7 @@ class _PlaceholderImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Icon(
-        Icons.fastfood_rounded,
-        size: 42,
-        color: colors.iconAccent,
-      ),
+      child: Icon(Icons.fastfood_rounded, size: 42, color: colors.iconAccent),
     );
   }
 }

@@ -21,7 +21,9 @@ class OrderDetailScreen extends StatelessWidget {
         future: context.read<OrderProvider>().getOrderById(orderId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget.medium(message: 'Dang tai chi tiet don...');
+            return const LoadingWidget.medium(
+              message: 'Đang tải chi tiếp đơn...',
+            );
           }
 
           if (snapshot.hasError) {
@@ -53,13 +55,21 @@ class OrderDetailScreen extends StatelessWidget {
                         value: AppFormatters.formatCurrency(order.totalAmount),
                         valueColor: colors.primary,
                       ),
-                      _InfoRow(label: 'Dia chi', value: order.address.fullAddress),
+                      _InfoRow(
+                        label: 'Dia chi',
+                        value: order.address.fullAddress,
+                      ),
                       if (order.address.label != null &&
                           order.address.label!.trim().isNotEmpty)
-                        _InfoRow(label: 'Nhan', value: order.address.label!.trim()),
+                        _InfoRow(
+                          label: 'Nhan',
+                          value: order.address.label!.trim(),
+                        ),
                       _InfoRow(
                         label: 'Ngay tao',
-                        value: AppFormatters.formatDateTimeFromString(order.createdAt),
+                        value: AppFormatters.formatDateTimeFromString(
+                          order.createdAt,
+                        ),
                       ),
                     ],
                   ),
@@ -75,8 +85,12 @@ class OrderDetailScreen extends StatelessWidget {
                     margin: EdgeInsets.zero,
                     child: ListTile(
                       title: Text(item.name),
-                      subtitle: Text(AppFormatters.formatQuantity(item.quantity)),
-                      trailing: Text(AppFormatters.formatCurrency(item.subtotal)),
+                      subtitle: Text(
+                        AppFormatters.formatQuantity(item.quantity),
+                      ),
+                      trailing: Text(
+                        AppFormatters.formatCurrency(item.subtotal),
+                      ),
                     ),
                   ),
                 );
@@ -90,11 +104,7 @@ class OrderDetailScreen extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    this.valueColor,
-  });
+  const _InfoRow({required this.label, required this.value, this.valueColor});
 
   final String label;
   final String value;

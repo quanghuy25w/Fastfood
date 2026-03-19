@@ -92,13 +92,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
             children: [
               CustomTextField(
                 controller: _nameController,
-                labelText: 'Ten san pham',
-                hintText: 'Nhap ten san pham',
+                labelText: 'Tên sản phẩm',
+                hintText: 'Nhập tên sản phẩm',
                 prefixIcon: const Icon(Icons.fastfood_outlined),
                 textInputAction: TextInputAction.next,
                 validator: (value) => AppValidators.requiredField(
                   value,
-                  fieldName: 'ten san pham',
+                  fieldName: 'tên sản phẩm',
                 ),
               ),
               const SizedBox(height: 12),

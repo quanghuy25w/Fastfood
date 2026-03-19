@@ -10,11 +10,11 @@ import '../../widgets/custom_button.dart';
 import '../../widgets/loading_widget.dart';
 import 'add_address_screen.dart';
 
-/// Hien thi danh sach dia chi giao hang cua nguoi dung.
+/// Hiển thị danh sách địa chỉ giao hàng của người dùng.
 ///
-/// Cho phep chon, them, sua, xoa dia chi.
-/// Ket noi AddressProvider de quan ly state va du lieu SQLite.
-/// Tich hop voi Checkout flow de chon dia chi giao hang.
+/// Cho phép chọn, thêm, sửa, xoá địa chỉ.
+/// Kết nối AddressProvider để quản lý state và dữ liệu SQLite.
+/// Tích hợp với Checkout flow để chọn địa chỉ giao hàng.
 class AddressListScreen extends StatefulWidget {
   const AddressListScreen({super.key, this.isCheckoutSelection = false});
 
@@ -71,9 +71,9 @@ class _AddressListScreenState extends State<AddressListScreen> {
   Future<void> _deleteAddress(Address address) async {
     final confirmed = await ConfirmDialog.show(
       context,
-      title: 'Xoa dia chi',
-      message: 'Ban co chac chan muon xoa dia chi nay?',
-      confirmText: 'Xoa',
+      title: 'Xoá địa chỉ',
+      message: 'Bạn có chắc chắn muốn xoá địa chỉ này?',
+      confirmText: 'Xoá',
       cancelText: 'Huy',
       icon: Icons.delete_outline,
       isDestructive: true,
@@ -99,7 +99,7 @@ class _AddressListScreenState extends State<AddressListScreen> {
 
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Da xoa dia chi')));
+    ).showSnackBar(const SnackBar(content: Text('Đã xoá địa chỉ')));
   }
 
   void _selectAddress(Address address) {
@@ -119,8 +119,8 @@ class _AddressListScreenState extends State<AddressListScreen> {
       appBar: AppBar(
         title: Text(
           widget.isCheckoutSelection
-              ? 'Chon dia chi giao hang'
-              : 'Danh sach dia chi',
+              ? 'Chọn địa chỉ giao hàng'
+              : 'Danh sách địa chỉ',
         ),
       ),
       body: _buildBody(provider, addresses),
@@ -129,7 +129,7 @@ class _AddressListScreenState extends State<AddressListScreen> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
           child: CustomButton.primary(
-            text: '+ Them dia chi',
+            text: '+ Thêm địa chỉ',
             onPressed: _openAddAddress,
             fullWidth: true,
           ),
@@ -142,7 +142,7 @@ class _AddressListScreenState extends State<AddressListScreen> {
     final colors = AppColors.of(context);
 
     if (provider.isLoading && addresses.isEmpty) {
-      return const LoadingWidget.medium(message: 'Dang tai dia chi...');
+      return const LoadingWidget.medium(message: 'Đang tải địa chỉ...');
     }
 
     if (provider.errorMessage != null && addresses.isEmpty) {
@@ -155,7 +155,7 @@ class _AddressListScreenState extends State<AddressListScreen> {
               Text(provider.errorMessage!, textAlign: TextAlign.center),
               const SizedBox(height: 12),
               CustomButton.secondary(
-                text: 'Thu lai',
+                text: 'Thử lại',
                 onPressed: _loadAddresses,
                 leadingIcon: const Icon(Icons.refresh),
                 width: 150,
@@ -180,12 +180,12 @@ class _AddressListScreenState extends State<AddressListScreen> {
               ),
               const SizedBox(height: 12),
               Text(
-                'Chua co dia chi giao hang',
+                'Chưa có địa chỉ giao hàng',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
               const Text(
-                'Them dia chi de viec dat mon nhanh hon',
+                'Thêm địa chỉ để việc đặt món nhanh hơn',
                 textAlign: TextAlign.center,
               ),
             ],
@@ -276,12 +276,15 @@ class _AddressItem extends StatelessWidget {
               Text(
                 AppFormatters.formatPhone(
                   address.phone,
-                  fallback: 'Chua cap nhat so dien thoai',
+                  fallback: 'Chúa cập nhật số điện thoại',
                 ),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
-              Text(address.fullAddress, style: Theme.of(context).textTheme.bodyLarge),
+              Text(
+                address.fullAddress,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
               if (address.label != null &&
                   address.label!.trim().isNotEmpty) ...[
                 const SizedBox(height: 10),

@@ -24,17 +24,20 @@ class CartItemWidget extends StatelessWidget {
     final image = item.image?.trim() ?? '';
     final hasNetworkImage =
         image.startsWith('http://') || image.startsWith('https://');
+    final theme = Theme.of(context);
 
     return Card(
       margin: EdgeInsets.zero,
+      elevation: 1.2,
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // Product image
             Container(
-              width: 78,
-              height: 78,
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
                 color: colors.secondaryContainer,
                 borderRadius: BorderRadius.circular(14),
@@ -50,7 +53,8 @@ class CartItemWidget extends StatelessWidget {
                     )
                   : Icon(Icons.fastfood, color: colors.iconAccent),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 14),
+            // Product info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,19 +63,21 @@ class CartItemWidget extends StatelessWidget {
                     item.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     AppFormatters.formatCurrency(item.price),
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: colors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
                     AppFormatters.formatCurrency(item.subtotal),
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    style: theme.textTheme.titleSmall?.copyWith(
                       color: colors.primary,
                       fontWeight: FontWeight.w800,
                     ),
@@ -79,7 +85,8 @@ class CartItemWidget extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
+            // Quantity controls
             Column(
               children: [
                 _QtyButton(
@@ -92,7 +99,9 @@ class CartItemWidget extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   child: Text(
                     '${item.quantity}',
-                    style: Theme.of(context).textTheme.titleSmall,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
                 _QtyButton(
@@ -134,13 +143,13 @@ class _QtyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: backgroundColor,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         child: SizedBox(
-          width: 30,
-          height: 30,
+          width: 34,
+          height: 34,
           child: Icon(icon, size: 18, color: foregroundColor),
         ),
       ),

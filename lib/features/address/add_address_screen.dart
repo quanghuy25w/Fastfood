@@ -115,8 +115,8 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     }
 
     final successMessage = widget.isEditMode
-        ? 'Cap nhat dia chi thanh cong'
-        : 'Them dia chi thanh cong';
+        ? 'Cập nhật địa chỉ thành công'
+        : 'Thêm địa chỉ thành công';
 
     ScaffoldMessenger.of(
       context,
@@ -141,12 +141,12 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isEditMode ? 'Sua dia chi' : 'Them dia chi'),
+        title: Text(widget.isEditMode ? 'Sửa địa chỉ' : 'Thêm địa chỉ'),
       ),
       body: LoadingOverlay(
         isLoading: isBusy,
         message: widget.isEditMode
-            ? 'Dang cap nhat dia chi...'
+            ? 'Đang cập nhật địa chỉ...'
             : 'Dang luu dia chi...',
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -168,7 +168,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                 const SizedBox(height: 12),
                 CustomTextField(
                   controller: _phoneController,
-                  labelText: 'So dien thoai',
+                  labelText: 'Số điện thoại',
                   hintText: 'Vi du: 0901234567',
                   prefixIcon: const Icon(Icons.phone_outlined),
                   keyboardType: TextInputType.phone,
@@ -178,7 +178,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                 const SizedBox(height: 12),
                 CustomTextField(
                   controller: _labelController,
-                  labelText: 'Nhan dia chi (tuy chon)',
+                  labelText: 'Nhãn địa chỉ (tuy chọn)',
                   hintText: 'Vi du: Nha rieng, Cong ty',
                   prefixIcon: const Icon(Icons.label_outline),
                   textInputAction: TextInputAction.next,
@@ -186,19 +186,19 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                 const SizedBox(height: 12),
                 CustomTextField(
                   controller: _addressController,
-                  labelText: 'Dia chi chi tiet',
-                  hintText: 'Nhap dia chi giao hang',
+                  labelText: 'Địa chỉ chi tiếp',
+                  hintText: 'Nhập địa chỉ giao hàng',
                   prefixIcon: const Icon(Icons.location_on_outlined),
                   maxLines: 3,
                   minLines: 3,
                   validator: (value) => AppValidators.requiredField(
                     value,
-                    fieldName: 'dia chi chi tiet',
+                    fieldName: 'địa chỉ chi tiếp',
                   ),
                 ),
                 const SizedBox(height: 20),
                 CustomButton.primary(
-                  text: widget.isEditMode ? 'Cap nhat dia chi' : 'Luu dia chi',
+                  text: widget.isEditMode ? 'Cập nhật địa chỉ' : 'Lưu địa chỉ',
                   onPressed: _saveAddress,
                   enabled: !isBusy,
                   fullWidth: true,

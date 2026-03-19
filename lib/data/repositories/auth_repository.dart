@@ -4,7 +4,7 @@ import '../database/database_helper.dart';
 import '../models/user_model.dart';
 
 class AuthRepository {
-  // Ket noi SQLite de thao tac bang users.
+  // Kết nối SQLite để thao tác bảng users.
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
   static const String _tableUsers = 'users';
@@ -118,7 +118,8 @@ class AuthRepository {
         $_colId INTEGER PRIMARY KEY AUTOINCREMENT,
         $_colEmail TEXT NOT NULL UNIQUE,
         $_colName TEXT,
-        $_colPassword TEXT NOT NULL
+        $_colPassword TEXT NOT NULL,
+        role TEXT DEFAULT 'user'
       )
     ''');
   }

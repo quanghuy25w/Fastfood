@@ -3,12 +3,10 @@
 import '../services/shared_prefs_service.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  ThemeProvider({
-    this.isDarkMode = false,
-    SharedPrefsService? prefsService,
-  }) : _prefsService = prefsService ?? SharedPrefsService.instance;
+  ThemeProvider({this.isDarkMode = false, SharedPrefsService? prefsService})
+    : _prefsService = prefsService ?? SharedPrefsService.instance;
 
-  // Quan ly Light/Dark Mode cho app.
+  // Quản lý Light/Dark Mode cho app.
   bool isDarkMode;
 
   final SharedPrefsService _prefsService;

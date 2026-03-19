@@ -56,8 +56,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
     final deleted = await ConfirmDialog.show(
       context,
-      title: 'Xoa san pham',
-      message: 'Ban co chac chan muon xoa san pham nay khong?',
+      title: 'Xoá sản phẩm',
+      message: 'Bạn có chắc chắn muốn xoá sản phẩm này không?',
       confirmText: 'Xoa',
       cancelText: 'Huy',
       icon: Icons.delete_forever_outlined,
@@ -82,7 +82,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Future<void> _handleAddToCart() async {
     final productId = product.id;
     if (productId == null) {
-      AppHelpers.showErrorSnackBar(context, 'Khong the them san pham nay vao gio');
+      AppHelpers.showErrorSnackBar(
+        context,
+        'Không thể thêm sản phẩm này vào giỏ',
+      );
       return;
     }
 
@@ -91,7 +94,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final userId = authProvider.currentUser?.id ?? cartProvider.activeUserId;
 
     if (userId == null) {
-      AppHelpers.showWarningSnackBar(context, 'Vui long dang nhap de dat hang');
+      AppHelpers.showWarningSnackBar(context, 'Vui lòng đăng nhập để đặt hàng');
       return;
     }
 
@@ -129,14 +132,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chi tiet mon an'),
+        title: const Text('Chi tiếp món ăn'),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_outlined),
-            tooltip: 'Sua san pham',
+            tooltip: 'Sửa sản phẩm',
             onPressed: () {
               _onEditPressed(context);
             },
@@ -146,6 +150,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       body: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0, end: 1),
         duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOut,
         builder: (context, value, child) {
           return Opacity(
             opacity: value,
@@ -160,28 +165,30 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           children: [
             _ProductImage(imageUrl: product.image),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 140),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     product.name,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w800,
+                      height: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Text(
                     AppFormatters.formatCurrency(product.price),
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    style: theme.textTheme.titleLarge?.copyWith(
                       color: colors.primary,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   _InfoTile(
                     label: 'Mo ta',
-                    value: product.description ?? 'Mon ngon duoc che bien nhanh',
+                    value:
+                        product.description ?? 'Mon ngon duoc che bien nhanh',
                   ),
                   const SizedBox(height: 12),
                   _InfoTile(
@@ -191,11 +198,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   const SizedBox(height: 12),
                   _InfoTile(
                     label: 'Thoi gian tao',
-                    value: AppFormatters.formatDateTimeFromString(product.createdAt),
+                    value: AppFormatters.formatDateTimeFromString(
+                      product.createdAt,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   CustomButton.outline(
-                    text: 'Xoa san pham',
+                    text: 'Xoá sản phẩm',
                     onPressed: () {
                       _onDeletePressed(context);
                     },
@@ -214,25 +223,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       bottomNavigationBar: SafeArea(
         top: false,
         child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: theme.cardColor,
             boxShadow: [
               BoxShadow(
                 color: colors.shadow,
-                blurRadius: 10,
+                blurRadius: 12,
                 offset: const Offset(0, -3),
               ),
             ],
           ),
           child: Row(
             children: [
+              // Quantity control
               Container(
                 decoration: BoxDecoration(
                   color: colors.secondaryContainer,
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
                       onPressed: _quantity > 1
@@ -243,10 +254,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             }
                           : null,
                       icon: const Icon(Icons.remove),
+                      splashRadius: 20,
                     ),
-                    Text(
-                      '$_quantity',
-                      style: Theme.of(context).textTheme.titleSmall,
+                    SizedBox(
+                      width: 32,
+                      child: Text(
+                        '$_quantity',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                     IconButton(
                       onPressed: () {
@@ -255,18 +273,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         });
                       },
                       icon: const Icon(Icons.add),
+                      splashRadius: 20,
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
+              // Add to cart button
               Expanded(
                 child: CustomButton.primary(
-                  text: 'Add to Cart',
+                  text: 'Them vao gio',
                   onPressed: _handleAddToCart,
                   isLoading: _isAdding,
                   fullWidth: true,
-                  trailingIcon: const Icon(Icons.shopping_cart_checkout_outlined),
+                  trailingIcon: const Icon(
+                    Icons.shopping_cart_checkout_outlined,
+                  ),
                 ),
               ),
             ],
@@ -289,7 +311,7 @@ class _ProductImage extends StatelessWidget {
     final hasImage = url.startsWith('http://') || url.startsWith('https://');
 
     return AspectRatio(
-      aspectRatio: 16 / 10,
+      aspectRatio: 1 / 1.1,
       child: Container(
         decoration: BoxDecoration(color: colors.secondaryContainer),
         clipBehavior: Clip.antiAlias,
@@ -300,15 +322,19 @@ class _ProductImage extends StatelessWidget {
                 errorBuilder: (context, error, stackTrace) {
                   return Center(
                     child: Icon(
-                      Icons.fastfood,
-                      size: 56,
+                      Icons.fastfood_rounded,
+                      size: 80,
                       color: colors.iconAccent,
                     ),
                   );
                 },
               )
             : Center(
-                child: Icon(Icons.fastfood, size: 56, color: colors.iconAccent),
+                child: Icon(
+                  Icons.fastfood_rounded,
+                  size: 80,
+                  color: colors.iconAccent,
+                ),
               ),
       ),
     );
@@ -324,6 +350,7 @@ class _InfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final theme = Theme.of(context);
 
     return Container(
       width: double.infinity,
@@ -331,19 +358,25 @@ class _InfoTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: colors.border),
+        border: Border.all(color: colors.border.withValues(alpha: 0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            style: theme.textTheme.labelMedium?.copyWith(
               color: colors.textSecondary,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(value, style: Theme.of(context).textTheme.bodyLarge),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );

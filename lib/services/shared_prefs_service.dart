@@ -9,10 +9,11 @@ class SharedPrefsService {
   static const String _keyFirstLaunch = 'isFirstLaunch';
   static const String _keyUserId = 'userId';
   static const String _keyIsLoggedIn = 'isLoggedIn';
+  static const String _keyUserRole = 'userRole';
 
-  /// Service luu tru cuc bo bang SharedPreferences.
-  /// Luu trang thai theme, huong dan, session login.
-  /// Du lieu ton tai offline, ton tai sau khi tat app.
+  /// Service lưu trữ cục bộ bằng SharedPreferences.
+  /// Lưu trạng thái chủ đề, hước dẫn, session login.
+  /// Dữ liệu tồn tại offline, tồn tại sau khi tắt app.
   Future<void> setDarkMode(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_keyDarkMode, value);
@@ -42,6 +43,16 @@ class SharedPrefsService {
   Future<int?> getUserId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(_keyUserId);
+  }
+
+  Future<void> setUserRole(String role) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyUserRole, role);
+  }
+
+  Future<String> getUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyUserRole) ?? 'user';
   }
 
   Future<void> setLoggedIn(bool value) async {

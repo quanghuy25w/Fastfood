@@ -14,7 +14,7 @@ class DatabaseHelper {
   factory DatabaseHelper() => _instance;
 
   static const String _databaseName = 'fastfood.db';
-  static const int _databaseVersion = 4;
+  static const int _databaseVersion = 5;
 
   static bool _factoryInitialized = false;
 

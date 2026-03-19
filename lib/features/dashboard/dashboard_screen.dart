@@ -23,7 +23,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final shouldLogout = await ConfirmDialog.show(
       context,
       title: 'Dang xuat',
-      message: 'Ban co chac chan muon dang xuat khong?',
+      message: 'Bạn có chắc chắn muốn đăng xuất không?',
       confirmText: 'Dang xuat',
       cancelText: 'Huy',
       icon: Icons.logout,
@@ -175,7 +175,7 @@ class _HomeTab extends StatelessWidget {
         ),
         _QuickTile(
           title: 'Gio hang',
-          subtitle: 'Xem va cap nhat mon da chon',
+          subtitle: 'Xem và cập nhật món đã chọn',
           icon: Icons.shopping_cart_checkout,
           onTap: () {
             Navigator.of(context).pushNamed(AppRoutes.cart);
@@ -191,7 +191,7 @@ class _HomeTab extends StatelessWidget {
         ),
         _QuickTile(
           title: 'Cai dat',
-          subtitle: 'Theme va dia chi giao hang',
+          subtitle: 'Chủ đề và địa chỉ giao hàng',
           icon: Icons.settings_outlined,
           onTap: () {
             Navigator.of(context).pushNamed(AppRoutes.settings);
@@ -218,8 +218,11 @@ class _CartQuickTab extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.remove_shopping_cart_outlined,
-                  size: 50, color: colors.textSecondary),
+              Icon(
+                Icons.remove_shopping_cart_outlined,
+                size: 50,
+                color: colors.textSecondary,
+              ),
               const SizedBox(height: 10),
               Text(
                 'Chua co mon trong gio',
@@ -276,7 +279,11 @@ class _CartQuickTab extends StatelessWidget {
                   backgroundColor: colors.secondaryContainer,
                   child: Icon(Icons.fastfood_rounded, color: colors.iconAccent),
                 ),
-                title: Text(item.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+                title: Text(
+                  item.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 subtitle: Text('SL ${item.quantity}'),
                 trailing: Text(AppFormatters.formatCurrency(item.subtotal)),
               ),
@@ -336,7 +343,10 @@ class _ProfileTab extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 2),
-                      Text(user?.email ?? '-', style: Theme.of(context).textTheme.bodyMedium),
+                      Text(
+                        user?.email ?? '-',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ],
                   ),
                 ),
@@ -346,8 +356,8 @@ class _ProfileTab extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         _QuickTile(
-          title: 'Quan ly dia chi',
-          subtitle: 'Them, sua, chon dia chi giao hang',
+          title: 'Quản lý địa chỉ',
+          subtitle: 'Thêm, sửa, chọn địa chỉ giao hàng',
           icon: Icons.location_on_outlined,
           onTap: () {
             Navigator.of(context).pushNamed(AppRoutes.settings);

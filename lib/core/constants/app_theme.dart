@@ -73,10 +73,10 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         color: palette.cardBackground,
-        elevation: brightness == Brightness.dark ? 0.6 : 1.8,
+        elevation: brightness == Brightness.dark ? 0.5 : 1.2,
         shadowColor: palette.shadow,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -85,12 +85,15 @@ class AppTheme {
           disabledBackgroundColor: palette.buttonDisabled,
           disabledForegroundColor: palette.buttonDisabledText,
           elevation: 0,
-          minimumSize: const Size(double.infinity, 54),
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          minimumSize: const Size(double.infinity, 56),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(20),
           ),
-          textStyle: textTheme.labelLarge,
+          textStyle: textTheme.labelLarge?.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
       textButtonTheme: TextButtonThemeData(

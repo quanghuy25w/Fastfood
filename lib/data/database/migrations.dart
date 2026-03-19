@@ -65,7 +65,21 @@ class Migration {
         }
       }
 
-      // Future versions (V5, V6...) can extend other tables.
+      // Version 5: add role column to users table for admin management.
+      if (oldVersion < 5 && newVersion >= 5) {
+        const usersTable = 'users';
+        final hasRoleColumn = await _hasColumn(db, usersTable, 'role');
+
+        if (!hasRoleColumn) {
+          await db.execute(
+            'ALTER TABLE $usersTable '
+            'ADD COLUMN role TEXT DEFAULT \'user\';',
+          );
+          _log('Migration V5 done: added users.role');
+        }
+      }
+
+      // Future versions (V6, V7...) can extend other tables.
     } catch (e) {
       _log('Migration error: $e');
       rethrow;

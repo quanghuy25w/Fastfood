@@ -6,11 +6,11 @@ import '../data/repositories/order_repository.dart';
 
 class OrderProvider extends ChangeNotifier {
   OrderProvider({OrderRepository? orderRepository})
-      : _orderRepository = orderRepository ?? OrderRepository();
+    : _orderRepository = orderRepository ?? OrderRepository();
 
   final OrderRepository _orderRepository;
 
-  // UI tu dong rebuild khi orders thay doi.
+  // UI tự động rebuild khi orders thẻay đổi.
   List<Order> orders = [];
 
   // Xu ly loading va error.
@@ -19,7 +19,7 @@ class OrderProvider extends ChangeNotifier {
 
   int _activeUserId = 0;
 
-  /// Load danh sach Order tu DB.
+  /// Load danh sách Order từ DB.
   Future<void> fetchOrders([int? userId]) async {
     if (userId != null) {
       _activeUserId = userId;
@@ -39,7 +39,7 @@ class OrderProvider extends ChangeNotifier {
     }
   }
 
-  /// Them Order khi Checkout.
+  /// Thêm Order khi Checkout.
   Future<void> addOrder(Order order) async {
     try {
       isLoading = true;
@@ -50,15 +50,15 @@ class OrderProvider extends ChangeNotifier {
       final orderItems = order.orderItems.isNotEmpty
           ? order.orderItems
           : order.items
-              .map(
-                (item) => OrderItem(
-                  productId: item.productId,
-                  name: item.name,
-                  price: item.price,
-                  quantity: item.quantity,
-                ),
-              )
-              .toList();
+                .map(
+                  (item) => OrderItem(
+                    productId: item.productId,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity,
+                  ),
+                )
+                .toList();
 
       await _orderRepository.insertOrder(
         order.copyWith(userId: userId),

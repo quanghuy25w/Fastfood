@@ -124,7 +124,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
       setState(() {
         _errorText =
             widget.errorBuilder?.call(error) ??
-            'Thao tac that bai. Vui long thu lai.';
+            'Thao tác thất bại. Vui lòng thử lại.';
       });
     } finally {
       if (mounted) {

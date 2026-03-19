@@ -72,7 +72,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   Future<void> _addToCart(Product product) async {
     if (product.id == null) {
-      AppHelpers.showErrorSnackBar(context, 'Khong the them san pham nay vao gio');
+      AppHelpers.showErrorSnackBar(
+        context,
+        'Không thể thêm sản phẩm này vào giỏ',
+      );
       return;
     }
 
@@ -81,7 +84,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     final userId = authProvider.currentUser?.id ?? cartProvider.activeUserId;
 
     if (userId == null) {
-      AppHelpers.showWarningSnackBar(context, 'Vui long dang nhap de dat hang');
+      AppHelpers.showWarningSnackBar(context, 'Vui lòng đăng nhập để đặt hàng');
       return;
     }
 
@@ -113,7 +116,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
     return source.where((product) {
       final matchCategory =
-          _selectedCategoryId == null || product.categoryId == _selectedCategoryId;
+          _selectedCategoryId == null ||
+          product.categoryId == _selectedCategoryId;
 
       final matchQuery =
           query.isEmpty ||
@@ -200,12 +204,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
           children: [
             _HeroBanner(),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
               child: TextField(
                 controller: _searchController,
                 onChanged: (_) => setState(() {}),
                 decoration: InputDecoration(
-                  hintText: 'Tim burger, pizza, nuoc uong...',
+                  hintText: 'Tìm kiếm món ăn...',
                   prefixIcon: const Icon(Icons.search),
                   suffixIcon: _searchController.text.isEmpty
                       ? null
@@ -216,6 +220,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           },
                           icon: const Icon(Icons.close),
                         ),
+                  isDense: true,
                 ),
               ),
             ),
@@ -324,7 +329,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.no_food_outlined, size: 44, color: colors.textSecondary),
+              Icon(
+                Icons.no_food_outlined,
+                size: 44,
+                color: colors.textSecondary,
+              ),
               const SizedBox(height: 10),
               Text(
                 'Khong tim thay mon phu hop',
@@ -421,7 +430,7 @@ class _HeroBanner extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Mon nong, gia ro rang, thanh toan nhanh gon',
+                    'Món nóng, giá rõ ràng, thanh toán nhanh gọn',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: colors.onPrimary.withValues(alpha: 0.92),
                     ),
@@ -458,34 +467,38 @@ class _CategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.only(right: 10),
       child: Material(
         color: selected ? colors.primary : colors.surface,
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(16),
+        elevation: selected ? 1.5 : 0.5,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(16),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(999),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: selected ? colors.primary : colors.border,
+                width: selected ? 0 : 1,
               ),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   icon,
                   size: 18,
                   color: selected ? colors.onPrimary : colors.textSecondary,
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 8),
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  style: theme.textTheme.labelMedium?.copyWith(
                     color: selected ? colors.onPrimary : colors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),

@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 
 import '../../data/models/product_model.dart';
+import '../../features/admin/admin_dashboard_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/register_screen.dart';
 import '../../features/cart/cart_screen.dart';
@@ -18,6 +19,7 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String dashboard = '/dashboard';
+  static const String adminDashboard = '/admin-dashboard';
   static const String productList = '/products';
   static const String productDetail = '/product-detail';
   static const String cart = '/cart';
@@ -27,7 +29,7 @@ class AppRoutes {
   static const String settings = '/settings';
 
   static String initialRoute({required bool isLoggedIn}) {
-    return isLoggedIn ? dashboard : login;
+    return splash; // Luôn bắt đầu từ splash để load user
   }
 
   static Route<dynamic> onGenerateRoute(RouteSettings settingsArg) {
@@ -40,6 +42,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const RegisterScreen());
       case dashboard:
         return MaterialPageRoute(builder: (_) => const DashboardScreen());
+      case adminDashboard:
+        return MaterialPageRoute(builder: (_) => const AdminDashboardScreen());
       case productList:
         return MaterialPageRoute(builder: (_) => const ProductListScreen());
       case productDetail:

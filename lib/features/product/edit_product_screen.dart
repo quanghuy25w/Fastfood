@@ -97,7 +97,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Cap nhat san pham thanh cong')),
+      const SnackBar(content: Text('Cập nhật sản phẩm thành công')),
     );
     Navigator.of(context).pop(true);
   }
@@ -105,7 +105,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sua san pham')),
+      appBar: AppBar(title: const Text('Sửa sản phẩm')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -114,13 +114,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
             children: [
               CustomTextField(
                 controller: _nameController,
-                labelText: 'Ten san pham',
-                hintText: 'Nhap ten san pham',
+                labelText: 'Tên sản phẩm',
+                hintText: 'Nhập tên sản phẩm',
                 prefixIcon: const Icon(Icons.fastfood_outlined),
                 textInputAction: TextInputAction.next,
                 validator: (value) => AppValidators.requiredField(
                   value,
-                  fieldName: 'ten san pham',
+                  fieldName: 'tên sản phẩm',
                 ),
               ),
               const SizedBox(height: 12),

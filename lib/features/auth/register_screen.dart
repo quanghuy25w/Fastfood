@@ -80,7 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 color: colors.secondaryContainer,
               ),
               child: Text(
-                'Tao tai khoan de dat mon va theo doi don hang nhanh hon.',
+                'Tạo tài khoản để đặt món và theo dÕi đơn hàng nhanh hơn.',
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),

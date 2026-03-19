@@ -10,13 +10,13 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider({
     AuthRepository? authRepository,
     SharedPrefsService? sharedPrefsService,
-  })  : _authRepository = authRepository ?? AuthRepository(),
-        _sharedPrefsService = sharedPrefsService ?? SharedPrefsService.instance;
+  }) : _authRepository = authRepository ?? AuthRepository(),
+       _sharedPrefsService = sharedPrefsService ?? SharedPrefsService.instance;
 
   final AuthRepository _authRepository;
   final SharedPrefsService _sharedPrefsService;
 
-  // Quan ly trang thai dang nhap/dang ky.
+  // Quản lý trạng thái đăng nhập/đăng ký.
   User? currentUser;
 
   // Loading indicator va error message cho UI.
@@ -35,8 +35,11 @@ class AuthProvider extends ChangeNotifier {
       }
 
       currentUser = user;
+      // Luôn lưu userId, role và isLoggedIn khi login thành công
       if (user.id != null) {
         await _sharedPrefsService.setUserId(user.id!);
+        await _sharedPrefsService.setUserRole(user.role);
+        await _sharedPrefsService.setLoggedIn(true);
       } else {
         await _sharedPrefsService.setLoggedIn(true);
       }
@@ -62,8 +65,11 @@ class AuthProvider extends ChangeNotifier {
       }
 
       currentUser = createdUser;
+      // Luôn lưu userId, role và isLoggedIn khi register thành công
       if (createdUser.id != null) {
         await _sharedPrefsService.setUserId(createdUser.id!);
+        await _sharedPrefsService.setUserRole(createdUser.role);
+        await _sharedPrefsService.setLoggedIn(true);
       } else {
         await _sharedPrefsService.setLoggedIn(true);
       }

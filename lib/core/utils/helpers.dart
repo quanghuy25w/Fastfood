@@ -6,7 +6,7 @@ import '../../widgets/loading_widget.dart';
 
 /// Helper functions dung chung cho toan app.
 ///
-/// Giam lap code va chuan hoa logic xu ly:
+/// Giảm lậ p code và chuẩn hóa logic xử lý:
 /// - dialog/alert
 /// - navigation
 /// - async handling + loading
@@ -300,21 +300,22 @@ class AppHelpers {
     if (lower.contains('socket') ||
         lower.contains('network') ||
         lower.contains('timed out')) {
-      return 'Khong the ket noi mang. Vui long kiem tra Internet.';
+      return 'Không thể kết nối mạng. Vui lòng kiểm tra Internet.';
     }
 
     if (lower.contains('sqlite') ||
         lower.contains('database') ||
         lower.contains('db')) {
-      return 'Du lieu dang gap loi. Vui long thu lai sau.';
+      return 'Dữ liệu đang gặp lỗi. Vui lòng thử lại sau.';
     }
 
     if (lower.contains('permission')) {
-      return 'Ban khong co quyen thuc hien thao tac nay.';
+      return 'Bạn không có quyền thực hiện thao tác này.';
+      ;
     }
 
     if (lower.contains('not found')) {
-      return 'Khong tim thay du lieu phu hop.';
+      return 'Không tìm thấy dữ liệu phù hợp.';
     }
 
     return raw;

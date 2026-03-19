@@ -23,8 +23,8 @@ class CartScreen extends StatelessWidget {
   ) async {
     await ConfirmDialog.show(
       context,
-      title: 'Xoa san pham',
-      message: 'Ban co chac chan muon xoa san pham khoi gio hang khong?',
+      title: 'Xoá sản phẩm',
+      message: 'Bạn có chắc chắn muốn xoá sản phẩm khỏi giỏ hàng không?',
       confirmText: 'Xoa',
       cancelText: 'Huy',
       icon: Icons.delete_outline,
@@ -43,6 +43,7 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final theme = Theme.of(context);
 
     // Load cart state from Provider.
     final cartProvider = context.watch<CartProvider>();
@@ -56,9 +57,9 @@ class CartScreen extends StatelessWidget {
             },
           )
         : ListView.separated(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 180),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 200),
             itemCount: items.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            separatorBuilder: (_, _) => const SizedBox(height: 14),
             itemBuilder: (context, index) {
               final item = items[index];
 
@@ -82,6 +83,7 @@ class CartScreen extends StatelessWidget {
       body: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0, end: 1),
         duration: const Duration(milliseconds: 260),
+        curve: Curves.easeOut,
         builder: (context, value, child) {
           return Opacity(
             opacity: value,
@@ -100,16 +102,31 @@ class CartScreen extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.error.withValues(alpha: 0.12),
+                    border: Border.all(
+                      color: colors.error.withValues(alpha: 0.3),
+                    ),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(
-                    cartProvider.errorMessage!,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: colors.error,
-                    ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.error_outline, color: colors.error, size: 20),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          cartProvider.errorMessage!,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colors.error,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               Expanded(child: content),
@@ -120,14 +137,14 @@ class CartScreen extends StatelessWidget {
       bottomNavigationBar: SafeArea(
         top: false,
         child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: theme.cardColor,
             boxShadow: [
               BoxShadow(
                 color: colors.shadow,
-                blurRadius: 10,
-                offset: const Offset(0, -2),
+                blurRadius: 12,
+                offset: const Offset(0, -4),
               ),
             ],
           ),
@@ -135,33 +152,39 @@ class CartScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Items info
               Row(
                 children: [
                   Expanded(
                     child: Text(
                       'Tong tien',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   Text(
                     '${items.length} mon',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: colors.textSecondary,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
+              // Total price
               Text(
                 AppFormatters.formatCurrency(totalPrice),
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                style: theme.textTheme.headlineSmall?.copyWith(
                   color: colors.primary,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 14),
+              // Checkout button
               CustomButton.primary(
-                text: 'Checkout',
+                text: 'Thanh toan',
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const CheckoutScreen()),
@@ -187,6 +210,7 @@ class _EmptyCart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final theme = Theme.of(context);
 
     return Center(
       child: Padding(
@@ -194,27 +218,39 @@ class _EmptyCart extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.remove_shopping_cart_outlined,
-              size: 52,
-              color: colors.textSecondary,
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: colors.secondaryContainer,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Icon(
+                Icons.shopping_cart_outlined,
+                size: 40,
+                color: colors.secondary,
+              ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             Text(
-              'Chua co mon nao trong gio',
-              style: Theme.of(context).textTheme.titleMedium,
+              'Gio hang trong',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
-              'Hay chon mon ban yeu thich de dat hang ngay',
+              'Hay chon mon an yeu thich de dat hang',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colors.textSecondary,
+              ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 20),
             CustomButton.secondary(
               text: 'Xem menu',
               onPressed: onGoMenu,
-              width: 170,
+              width: 180,
               leadingIcon: const Icon(Icons.restaurant_menu_rounded),
             ),
           ],

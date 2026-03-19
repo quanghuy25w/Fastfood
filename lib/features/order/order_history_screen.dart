@@ -34,7 +34,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Lich su don hang')),
       body: provider.isLoading
-          ? const LoadingWidget.medium(message: 'Dang tai don hang...')
+          ? const LoadingWidget.medium(message: 'Đang tải đơn hàng...')
           : provider.orders.isEmpty
           ? Center(
               child: Padding(

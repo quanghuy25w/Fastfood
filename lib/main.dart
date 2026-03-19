@@ -68,15 +68,7 @@ class _FastFoodAppState extends State<FastFoodApp> {
     _themeProvider = ThemeProvider(isDarkMode: widget.initialIsDarkMode);
 
     _addressProvider.fetchAddresses();
-
-    if (widget.initialIsLoggedIn) {
-      _authProvider.loadCurrentUser();
-    }
-
-    if (widget.initialUserId != null) {
-      _cartProvider.loadCart(widget.initialUserId!);
-      _orderProvider.fetchOrders(widget.initialUserId!);
-    }
+    // currentUser sẽ được load trong SplashScreen
   }
 
   @override
@@ -100,9 +92,7 @@ class _FastFoodAppState extends State<FastFoodApp> {
             themeMode: themeProvider.isDarkMode
                 ? ThemeMode.dark
                 : ThemeMode.light,
-            initialRoute: AppRoutes.initialRoute(
-              isLoggedIn: widget.initialIsLoggedIn,
-            ),
+            initialRoute: AppRoutes.splash,
             onGenerateRoute: AppRoutes.onGenerateRoute,
           );
         },

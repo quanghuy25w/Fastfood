@@ -4,14 +4,14 @@ import '../database/database_helper.dart';
 import '../models/product_model.dart';
 
 class ProductRepository {
-  // Ket noi SQLite de thao tac bang products.
+  // Kết nối SQLite để thao tác bảng products.
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
   static const String _tableProducts = 'products';
   static const String _colId = 'id';
 
-  // CRUD san pham phuc vu ProductProvider.
-  // Tra ve du lieu typed Product.
+  // CRUD sản phẩm phục vụ ProductProvider.
+  // Trả về dữ liệu typed Product.
   Future<List<Product>> getAllProducts() async {
     try {
       final Database db = await _dbHelper.database;
@@ -87,11 +87,7 @@ class ProductRepository {
   Future<void> deleteProduct(int id) async {
     try {
       final Database db = await _dbHelper.database;
-      await db.delete(
-        _tableProducts,
-        where: '$_colId = ?',
-        whereArgs: [id],
-      );
+      await db.delete(_tableProducts, where: '$_colId = ?', whereArgs: [id]);
     } catch (e) {
       throw Exception('Delete product failed: $e');
     }

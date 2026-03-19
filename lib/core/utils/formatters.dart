@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-/// Cung cap cac ham format du lieu hien thi (gia tien, ngay gio, so luong...).
+/// Cung cấp các hàm format dữ liệu hiển thị (giá tiền, ngày giờ, số lượng...).
 ///
 /// Giup UI hien thi thong nhat va than thien voi nguoi dung.
 /// Duoc su dung rong rai trong Product, Cart, Order, Address.
@@ -24,7 +24,7 @@ class AppFormatters {
     return '$formatted$symbol';
   }
 
-  /// Format so luong san pham. Vi du: 3 -> 3 mon.
+  /// Format số lượng sản phẩm. Ví dụ: 3 -> 3 món.
   static String formatQuantity(int? quantity, {String unit = 'mon'}) {
     return '${quantity ?? 0} $unit';
   }
@@ -70,7 +70,7 @@ class AppFormatters {
     return formatDateTime(parsed, pattern: pattern, fallback: fallback);
   }
 
-  /// Chuan hoa hien thi so dien thoai de de doc.
+  /// Chuẩn hóa hiển thị số điện thoại để dễ đọc.
   /// Vi du: 0987654321 -> 0987 654 321.
   static String formatPhone(String? phone, {String fallback = '-'}) {
     final raw = phone?.trim() ?? '';
