@@ -38,6 +38,7 @@ class ApiService {
       address: (m['address'] as String?) ?? '',
     );
   }
+  
 
   Future<User?> login(String email, String password) async {
     final db = await DatabaseService.instance.database;
@@ -99,6 +100,23 @@ class ApiService {
       orderBy: 'id DESC',
     );
     return rows.map(_productFromMap).toList();
+  }
+
+  Future<List<String>> getCategories() async {
+    final db = await DatabaseService.instance.database;
+    final rows = await db.rawQuery('SELECT DISTINCT TRIM(category) as category FROM products WHERE is_active = 1 AND category IS NOT NULL ORDER BY category');
+
+    final categories = rows
+        .map<String?>((row) => row['category'] as String?)
+        .where((value) => value != null && value.isNotEmpty)
+        .cast<String>()
+        .toList();
+
+    if (!categories.contains('Khác')) {
+      categories.add('Khác');
+    }
+
+    return categories;
   }
 
   Future<List<Product>> getAdminProducts() async {

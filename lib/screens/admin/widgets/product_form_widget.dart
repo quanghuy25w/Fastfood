@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../services/api_service.dart';
 
 class ProductFormValue {
   const ProductFormValue({
@@ -6,12 +7,14 @@ class ProductFormValue {
     required this.price,
     required this.imageUrl,
     required this.description,
+    required this.category,
   });
 
   final String name;
   final double price;
   final String imageUrl;
   final String description;
+  final String category;
 }
 
 class ProductFormWidget extends StatefulWidget {
@@ -21,6 +24,7 @@ class ProductFormWidget extends StatefulWidget {
     this.initialPrice,
     this.initialImageUrl = '',
     this.initialDescription = '',
+    this.initialCategory = '',
     this.loading = false,
     required this.onSubmit,
   });
@@ -29,6 +33,7 @@ class ProductFormWidget extends StatefulWidget {
   final double? initialPrice;
   final String initialImageUrl;
   final String initialDescription;
+  final String initialCategory;
   final bool loading;
   final ValueChanged<ProductFormValue> onSubmit;
 
@@ -38,20 +43,50 @@ class ProductFormWidget extends StatefulWidget {
 
 class _ProductFormWidgetState extends State<ProductFormWidget> {
   final _formKey = GlobalKey<FormState>();
+
   late final TextEditingController _name;
   late final TextEditingController _price;
   late final TextEditingController _imageUrl;
   late final TextEditingController _description;
 
+  // ✅ category value
+  String? _category;
+
+  // ✅ category list từ API
+  List<String> _categories = [];
+  bool _loadingCategories = true;
+
   @override
   void initState() {
     super.initState();
+
     _name = TextEditingController(text: widget.initialName);
+
     _price = TextEditingController(
-      text: widget.initialPrice == null ? '' : widget.initialPrice!.toStringAsFixed(0),
+      text: widget.initialPrice == null
+          ? ''
+          : widget.initialPrice!.toStringAsFixed(0),
     );
+
     _imageUrl = TextEditingController(text: widget.initialImageUrl);
     _description = TextEditingController(text: widget.initialDescription);
+
+    _category =
+        widget.initialCategory.isEmpty ? null : widget.initialCategory;
+
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final data = await ApiService.instance.getCategories();
+      setState(() {
+        _categories = data;
+        _loadingCategories = false;
+      });
+    } catch (e) {
+      setState(() => _loadingCategories = false);
+    }
   }
 
   @override
@@ -80,53 +115,118 @@ class _ProductFormWidgetState extends State<ProductFormWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // ===== NAME =====
               _FieldLabel('Tên sản phẩm'),
               TextFormField(
                 controller: _name,
-                validator: (v) => v == null || v.trim().isEmpty ? 'Vui lòng nhập tên sản phẩm' : null,
-                decoration: const InputDecoration(hintText: 'Ví dụ: Cơm gà xối mỡ'),
+                validator: (v) =>
+                    v == null || v.trim().isEmpty
+                        ? 'Vui lòng nhập tên sản phẩm'
+                        : null,
+                decoration: const InputDecoration(
+                  hintText: 'Ví dụ: iPhone 15',
+                ),
               ),
+
               const SizedBox(height: 12),
+
+              // ===== PRICE =====
               _FieldLabel('Giá'),
               TextFormField(
                 controller: _price,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'Vui lòng nhập giá';
+                  if (v == null || v.trim().isEmpty)
+                    return 'Vui lòng nhập giá';
                   final parsed = double.tryParse(v.trim());
-                  if (parsed == null || parsed <= 0) return 'Giá không hợp lệ';
+                  if (parsed == null || parsed <= 0)
+                    return 'Giá không hợp lệ';
                   return null;
                 },
-                decoration: const InputDecoration(hintText: 'Ví dụ: 45000'),
+                decoration: const InputDecoration(
+                  hintText: 'Ví dụ: 15000000',
+                ),
               ),
+
               const SizedBox(height: 12),
+
+              // ===== CATEGORY =====
+              _FieldLabel('Danh mục'),
+              _loadingCategories
+                  ? const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : DropdownButtonFormField<String>(
+                      value: _category,
+                      items: _categories.map((e) {
+                        return DropdownMenuItem(
+                          value: e,
+                          child: Text(e),
+                        );
+                      }).toList(),
+                      onChanged: (v) =>
+                          setState(() => _category = v),
+                      validator: (v) =>
+                          v == null ? 'Vui lòng chọn danh mục' : null,
+                      decoration: const InputDecoration(
+                        hintText: 'Chọn danh mục',
+                      ),
+                    ),
+
+              const SizedBox(height: 12),
+
+              // ===== IMAGE =====
               _FieldLabel('Image URL'),
               TextFormField(
                 controller: _imageUrl,
-                validator: (v) => v == null || v.trim().isEmpty ? 'Vui lòng nhập link ảnh' : null,
-                decoration: const InputDecoration(hintText: 'https://...'),
+                validator: (v) =>
+                    v == null || v.trim().isEmpty
+                        ? 'Nhập đường dẫn ảnh'
+                        : null,
+                decoration: const InputDecoration(
+                  hintText: 'https://...',
+                ),
               ),
+
               const SizedBox(height: 12),
+
+              // ===== DESCRIPTION =====
               _FieldLabel('Mô tả'),
               TextFormField(
                 controller: _description,
                 minLines: 3,
                 maxLines: 5,
-                validator: (v) => v == null || v.trim().isEmpty ? 'Vui lòng nhập mô tả' : null,
-                decoration: const InputDecoration(hintText: 'Mô tả ngắn về sản phẩm'),
+                validator: (v) =>
+                    v == null || v.trim().isEmpty
+                        ? 'Nhập mô tả sản phẩm'
+                        : null,
+                decoration: const InputDecoration(
+                  hintText: 'Mô tả sản phẩm',
+                ),
               ),
+
               const SizedBox(height: 16),
+
+              // ===== BUTTON =====
               FilledButton(
                 onPressed: widget.loading
                     ? null
                     : () {
                         if (!_formKey.currentState!.validate()) return;
+
                         widget.onSubmit(
                           ProductFormValue(
                             name: _name.text.trim(),
-                            price: double.parse(_price.text.trim()),
+                            price:
+                                double.parse(_price.text.trim()),
                             imageUrl: _imageUrl.text.trim(),
-                            description: _description.text.trim(),
+                            description:
+                                _description.text.trim(),
+                            category: _category!,
                           ),
                         );
                       },
@@ -160,7 +260,10 @@ class _FieldLabel extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         text,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+        style: Theme.of(context)
+            .textTheme
+            .labelLarge
+            ?.copyWith(fontWeight: FontWeight.w700),
       ),
     );
   }

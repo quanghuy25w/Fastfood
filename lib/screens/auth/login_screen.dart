@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 InputField(
                   controller: _email,
                   label: 'Email',
-                
+                  hint: 'demo@mini.shopp',
                   keyboardType: TextInputType.emailAddress,
                   autocorrect: false,
                   validator: (v) =>
@@ -88,8 +88,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   validator: (v) => v == null || v.isEmpty ? 'Nhập mật khẩu' : null,
                 ),
                 const SizedBox(height: 8),
-             
-                
+                Text(
+                  '',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        height: 1.4,
+                      ),
+                ),
                 const SizedBox(height: 24),
                 FilledButton(
                   onPressed: _loading ? null : _submit,

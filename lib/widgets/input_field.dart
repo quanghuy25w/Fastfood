@@ -10,7 +10,6 @@ class InputField extends StatelessWidget {
     this.keyboardType,
     this.validator,
     this.autocorrect = true,
-    this.prefixIcon,
   });
 
   final TextEditingController controller;
@@ -20,7 +19,6 @@ class InputField extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final bool autocorrect;
-  final Widget? prefixIcon;
 
   @override
   Widget build(BuildContext context) {
