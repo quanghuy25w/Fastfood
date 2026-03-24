@@ -51,23 +51,43 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF9FAFB),
       appBar: AppBar(
-        title: Text(widget.isEdit ? 'Sửa sản phẩm' : 'Thêm sản phẩm'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          ProductFormWidget(
-            loading: _loading,
-            initialName: widget.product?.name ?? '',
-            initialPrice: widget.product?.price,
-            initialImageUrl: widget.product?.imageUrl ?? '',
-            initialDescription: widget.product?.description ?? '',
-            onSubmit: _save,
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        elevation: 0.5,
+        centerTitle: true,
+        title: Text(
+          widget.isEdit ? 'Sửa sản phẩm' : 'Thêm sản phẩm',
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black87,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
-        ],
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        ),
+        iconTheme: IconThemeData(color: cs.primary),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: ProductFormWidget(
+              loading: _loading,
+              initialName: widget.product?.name ?? '',
+              initialPrice: widget.product?.price,
+              initialImageUrl: widget.product?.imageUrl ?? '',
+              initialDescription: widget.product?.description ?? '',
+              initialCategory: widget.product?.category ?? '',
+              onSubmit: _save,
+            ),
+          ),
+        ),
       ),
     );
   }

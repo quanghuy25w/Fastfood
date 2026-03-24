@@ -6,6 +6,7 @@ import '../../models/product.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/cart_provider.dart';
 import '../../services/api_service.dart';
+import '../admin/product_detail_screen.dart';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // DESIGN TOKENS
@@ -33,12 +34,22 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Product>> _future;
+  late Future<List<String>> _categoriesFuture;
   String? _selectedCategory;
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _future = ApiService.instance.getProducts();
+    _categoriesFuture = ApiService.instance.getCategories();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   static final _money = NumberFormat.currency(
@@ -47,18 +58,28 @@ class _HomeScreenState extends State<HomeScreen> {
     decimalDigits: 0,
   );
 
-  List<Product> _filterByCategory(List<Product> list) {
-    if (_selectedCategory == null || _selectedCategory!.isEmpty) return list;
-    return list.where((p) => p.category == _selectedCategory).toList();
+  List<Product> _filterProducts(List<Product> list) {
+    var result = list;
+    
+    // Filter by category
+    if (_selectedCategory != null && _selectedCategory!.isNotEmpty) {
+      result = result.where((p) => p.category == _selectedCategory).toList();
+    }
+    
+    // Filter by search query
+    if (_searchQuery.isNotEmpty) {
+      final q = _searchQuery.toLowerCase();
+      result = result.where((p) => 
+        p.name.toLowerCase().contains(q) || 
+        p.category.toLowerCase().contains(q) ||
+        p.description.toLowerCase().contains(q)
+      ).toList();
+    }
+    
+    return result;
   }
 
-  List<String> _categoriesFromProducts(List<Product> list) {
-    final cats = <String>{};
-    for (final p in list) {
-      if (p.category.trim().isNotEmpty) cats.add(p.category);
-    }
-    return ['Tất cả', ...cats.toList()..sort()];
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -101,8 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              final categories = _categoriesFromProducts(list);
-              final filtered = _filterByCategory(list);
+              final filtered = _filterProducts(list);
 
               return CustomScrollView(
                 physics: const BouncingScrollPhysics(
@@ -117,22 +137,36 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SliverToBoxAdapter(
                     child: SizedBox(height: _kSectionSpacing),
                   ),
-                  const SliverToBoxAdapter(
+                  SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: _kOuterPadding),
-                      child: SearchBarWidget(),
+                      padding: const EdgeInsets.symmetric(horizontal: _kOuterPadding),
+                      child: SearchBarWidget(
+                        controller: _searchController,
+                        onChanged: (query) {
+                          setState(() => _searchQuery = query);
+                        },
+                      ),
                     ),
                   ),
                   const SliverToBoxAdapter(
                     child: SizedBox(height: _kSectionSpacing),
                   ),
                   SliverToBoxAdapter(
-                    child: CategoryListWidget(
-                      categories: categories,
-                      selected: _selectedCategory,
-                      onSelect: (c) {
-                        setState(
-                          () => _selectedCategory = c == 'Tất cả' ? null : c,
+                    child: FutureBuilder<List<String>>(
+                      future: _categoriesFuture,
+                      builder: (context, snap) {
+                        if (snap.connectionState != ConnectionState.done) {
+                          return const SizedBox(height: 50);
+                        }
+                        final categories = <String>['Tất cả', ...(snap.data ?? [])];
+                        return CategoryListWidget(
+                          categories: categories,
+                          selected: _selectedCategory,
+                          onSelect: (c) {
+                            setState(
+                              () => _selectedCategory = c == 'Tất cả' ? null : c,
+                            );
+                          },
                         );
                       },
                     ),
@@ -161,7 +195,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             await context.read<CartProvider>().addProduct(p);
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Đã thêm ${p.name}')),
+                                SnackBar(
+                                  content: const Text('Đã thêm sản phẩm'),
+                                  backgroundColor: Colors.grey[700],
+                                  duration: const Duration(seconds: 2),
+                                ),
                               );
                             }
                           },
@@ -213,7 +251,7 @@ class HeaderWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Xin chào 👋',
+                  'Xin chào ',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: cs.onSurfaceVariant,
                     fontSize: 15,
@@ -259,7 +297,14 @@ class HeaderWidget extends StatelessWidget {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 class SearchBarWidget extends StatelessWidget {
-  const SearchBarWidget({super.key});
+  const SearchBarWidget({
+    super.key,
+    required this.controller,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -278,10 +323,10 @@ class SearchBarWidget extends StatelessWidget {
         ],
       ),
       child: TextField(
-        readOnly: true,
-        onTap: () {},
+        controller: controller,
+        onChanged: onChanged,
         decoration: InputDecoration(
-          hintText: 'Tìm món ăn...',
+          hintText: 'Tìm sản phẩm',
           hintStyle: TextStyle(
             color: cs.onSurfaceVariant.withOpacity(0.9),
             fontSize: 15,
@@ -292,6 +337,19 @@ class SearchBarWidget extends StatelessWidget {
             size: 24,
             color: cs.onSurfaceVariant.withOpacity(0.7),
           ),
+          suffixIcon: controller.text.isNotEmpty
+              ? GestureDetector(
+                  onTap: () {
+                    controller.clear();
+                    onChanged('');
+                  },
+                  child: Icon(
+                    Icons.close,
+                    size: 20,
+                    color: cs.onSurfaceVariant.withOpacity(0.5),
+                  ),
+                )
+              : null,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 18,
@@ -398,99 +456,113 @@ class ProductCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(_kBorderRadius),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProductDetailScreen(
+              product: product,
+              isAdmin: false,
+            ),
           ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            flex: 3,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(_kBorderRadius),
-              ),
-              child: Image.network(
-                product.imageUrl,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  color: cs.surfaceContainerHighest.withOpacity(0.5),
-                  child: Icon(
-                    Icons.fastfood_outlined,
-                    size: 40,
-                    color: cs.outline,
+        );
+      },
+      borderRadius: BorderRadius.circular(_kBorderRadius),
+      child: Container(
+        decoration: BoxDecoration(
+          color: cs.surface,
+          borderRadius: BorderRadius.circular(_kBorderRadius),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 14,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              flex: 3,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(_kBorderRadius),
+                ),
+                child: Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: cs.surfaceContainerHighest.withOpacity(0.5),
+                    child: Icon(
+                      Icons.fastfood_outlined,
+                      size: 40,
+                      color: cs.outline,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(_kInnerSpacing + 4),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: cs.onSurface,
-                    fontSize: 14,
-                    height: 1.3,
-                    letterSpacing: -0.2,
-                  ),
-                ),
-                const SizedBox(height: _kInnerSpacing),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      priceLabel,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: cs.primary,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                      ),
+            Padding(
+              padding: const EdgeInsets.all(_kInnerSpacing + 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: cs.onSurface,
+                      fontSize: 14,
+                      height: 1.3,
+                      letterSpacing: -0.2,
                     ),
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: onAdd,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: cs.primary.withOpacity(0.12),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.add_rounded,
-                            size: 22,
-                            color: cs.primary,
+                  ),
+                  const SizedBox(height: _kInnerSpacing),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        priceLabel,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: cs.primary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: onAdd,
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: cs.primary.withOpacity(0.12),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.add_rounded,
+                              size: 22,
+                              color: cs.primary,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

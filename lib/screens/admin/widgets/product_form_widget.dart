@@ -101,98 +101,121 @@ class _ProductFormWidgetState extends State<ProductFormWidget> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Card(
-      elevation: 0,
+      elevation: isDark ? 0 : 2,
+      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: cs.outlineVariant),
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: cs.outlineVariant, width: 1.2),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // ===== IMAGE PREVIEW =====
+              if (_imageUrl.text.trim().isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 18),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.network(
+                      _imageUrl.text.trim(),
+                      height: 160,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                      errorBuilder: (c, e, s) => Container(
+                        height: 160,
+                        color: isDark ? Colors.grey[900] : Colors.grey[200],
+                        child: const Center(child: Icon(Icons.broken_image_outlined, size: 48, color: Colors.grey)),
+                      ),
+                    ),
+                  ),
+                ),
+
               // ===== NAME =====
               _FieldLabel('Tên sản phẩm'),
               TextFormField(
                 controller: _name,
-                validator: (v) =>
-                    v == null || v.trim().isEmpty
-                        ? 'Vui lòng nhập tên sản phẩm'
-                        : null,
-                decoration: const InputDecoration(
-                  hintText: 'Ví dụ: iPhone 15',
+                validator: (v) => v == null || v.trim().isEmpty ? 'Chưa nhập tên sản phẩm' : null,
+                decoration: InputDecoration(
+                  hintText: '',
+                  filled: true,
+                  fillColor: isDark ? const Color(0xFF23232B) : const Color(0xFFF5F5F5),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
               // ===== PRICE =====
               _FieldLabel('Giá'),
               TextFormField(
                 controller: _price,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 validator: (v) {
-                  if (v == null || v.trim().isEmpty)
-                    return 'Vui lòng nhập giá';
+                  if (v == null || v.trim().isEmpty) return 'Chưa nhập giá';
                   final parsed = double.tryParse(v.trim());
-                  if (parsed == null || parsed <= 0)
-                    return 'Giá không hợp lệ';
+                  if (parsed == null || parsed <= 0) return 'Giá không hợp lệ';
                   return null;
                 },
-                decoration: const InputDecoration(
-                  hintText: 'Ví dụ: 15000000',
+                decoration: InputDecoration(
+                  hintText: '',
+                  filled: true,
+                  fillColor: isDark ? const Color(0xFF23232B) : const Color(0xFFF5F5F5),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
               // ===== CATEGORY =====
               _FieldLabel('Danh mục'),
               _loadingCategories
                   ? const Padding(
                       padding: EdgeInsets.all(12),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      child: Center(child: CircularProgressIndicator()),
                     )
                   : DropdownButtonFormField<String>(
                       value: _category,
                       items: _categories.map((e) {
-                        return DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
-                        );
+                        return DropdownMenuItem(value: e, child: Text(e));
                       }).toList(),
-                      onChanged: (v) =>
-                          setState(() => _category = v),
-                      validator: (v) =>
-                          v == null ? 'Vui lòng chọn danh mục' : null,
-                      decoration: const InputDecoration(
+                      onChanged: (v) => setState(() => _category = v),
+                      validator: (v) => v == null ? 'Vui lòng chọn danh mục' : null,
+                      decoration: InputDecoration(
                         hintText: 'Chọn danh mục',
+                        filled: true,
+                        fillColor: isDark ? const Color(0xFF23232B) : const Color(0xFFF5F5F5),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       ),
                     ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
               // ===== IMAGE =====
               _FieldLabel('Image URL'),
               TextFormField(
                 controller: _imageUrl,
-                validator: (v) =>
-                    v == null || v.trim().isEmpty
-                        ? 'Nhập đường dẫn ảnh'
-                        : null,
-                decoration: const InputDecoration(
+                onChanged: (_) => setState(() {}),
+                validator: (v) => v == null || v.trim().isEmpty ? 'Nhập đường dẫn ảnh' : null,
+                decoration: InputDecoration(
                   hintText: 'https://...',
+                  filled: true,
+                  fillColor: isDark ? const Color(0xFF23232B) : const Color(0xFFF5F5F5),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
               // ===== DESCRIPTION =====
               _FieldLabel('Mô tả'),
@@ -200,46 +223,54 @@ class _ProductFormWidgetState extends State<ProductFormWidget> {
                 controller: _description,
                 minLines: 3,
                 maxLines: 5,
-                validator: (v) =>
-                    v == null || v.trim().isEmpty
-                        ? 'Nhập mô tả sản phẩm'
-                        : null,
-                decoration: const InputDecoration(
+                validator: (v) => v == null || v.trim().isEmpty ? 'Nhập mô tả sản phẩm' : null,
+                decoration: InputDecoration(
                   hintText: 'Mô tả sản phẩm',
+                  filled: true,
+                  fillColor: isDark ? const Color(0xFF23232B) : const Color(0xFFF5F5F5),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 22),
 
               // ===== BUTTON =====
-              FilledButton(
-                onPressed: widget.loading
-                    ? null
-                    : () {
-                        if (!_formKey.currentState!.validate()) return;
-
-                        widget.onSubmit(
-                          ProductFormValue(
-                            name: _name.text.trim(),
-                            price:
-                                double.parse(_price.text.trim()),
-                            imageUrl: _imageUrl.text.trim(),
-                            description:
-                                _description.text.trim(),
-                            category: _category!,
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    backgroundColor: cs.primary,
+                    foregroundColor: cs.onPrimary,
+                    textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  onPressed: widget.loading
+                      ? null
+                      : () {
+                          if (!_formKey.currentState!.validate()) return;
+                          widget.onSubmit(
+                            ProductFormValue(
+                              name: _name.text.trim(),
+                              price: double.parse(_price.text.trim()),
+                              imageUrl: _imageUrl.text.trim(),
+                              description: _description.text.trim(),
+                              category: _category!,
+                            ),
+                          );
+                        },
+                  child: widget.loading
+                      ? SizedBox(
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.2,
+                            color: cs.onPrimary,
                           ),
-                        );
-                      },
-                child: widget.loading
-                    ? SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: cs.onPrimary,
-                        ),
-                      )
-                    : const Text('Lưu sản phẩm'),
+                        )
+                      : const Text('Lưu sản phẩm'),
+                ),
               ),
             ],
           ),

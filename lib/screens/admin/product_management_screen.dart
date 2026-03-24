@@ -16,6 +16,12 @@ class ProductManagementScreen extends StatefulWidget {
 class _ProductManagementScreenState extends State<ProductManagementScreen> {
   late Future<List<Product>> _future;
   String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -30,6 +36,12 @@ class _ProductManagementScreenState extends State<ProductManagementScreen> {
   }
 
   Future<void> _openForm([Product? product]) async {
+      void _openDetail(Product product) async {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => ProductDetailScreen(product: product)),
+        );
+      }
     final saved = await Navigator.push<bool>(
       context,
       MaterialPageRoute(builder: (_) => ProductFormScreen(product: product)),
@@ -174,6 +186,7 @@ class _ProductManagementScreenState extends State<ProductManagementScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: TextField(
+                      controller: _searchController,
                       onChanged: (query) {
                         setState(() => _searchQuery = query);
                       },
@@ -209,6 +222,7 @@ class _ProductManagementScreenState extends State<ProductManagementScreen> {
                       (context, index) {
                         final product = filteredProducts[index];
                         return InkWell(
+                          borderRadius: BorderRadius.circular(16),
                           onTap: () => _openDetail(product),
                           child: ProductGridCardWidget(
                             product: product,

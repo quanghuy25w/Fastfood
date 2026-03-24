@@ -206,7 +206,7 @@ class _OrderStatusCard extends StatelessWidget {
                 Icon(Icons.schedule, size: 20, color: cs.primary),
                 const SizedBox(width: 10),
                 Text(
-                  'Dự kiến giao: ${DateFormat('HH:mm').format(eta)}',
+                  'Đơn hàng sẽ giao đến bạn sớm nhất',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: cs.primary,
                         fontWeight: FontWeight.w600,

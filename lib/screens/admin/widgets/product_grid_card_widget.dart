@@ -56,23 +56,26 @@ class _ProductGridCardWidgetState extends State<ProductGridCardWidget>
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.5 : 0.08),
+              color: Colors.black.withOpacity(isDark ? 0.18 : 0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
           ],
+          // Remove border if any
         ),
+        clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// ===== PRODUCT IMAGE =====
             Container(
-              height: 140,
+              width: double.infinity,
+              height: 170,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(16),
                 ),
-                color: isDark ? Colors.grey[800] : Colors.grey[300],
+                color: isDark ? Colors.grey[800] : Colors.grey[200],
               ),
               child: widget.product.imageUrl.isNotEmpty
                   ? ClipRRect(
@@ -81,19 +84,21 @@ class _ProductGridCardWidgetState extends State<ProductGridCardWidget>
                       ),
                       child: Image.network(
                         widget.product.imageUrl,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                         width: double.infinity,
-                        height: 140,
-                        cacheHeight: 200,
-                        cacheWidth: 200,
+                        height: 170,
+                        cacheHeight: 240,
+                        cacheWidth: 240,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
-                            color: isDark ? Colors.grey[800] : Colors.grey[300],
+                            width: double.infinity,
+                            height: 170,
+                            color: isDark ? Colors.grey[800] : Colors.grey[200],
                             child: Center(
                               child: Icon(
                                 Icons.image_not_supported_outlined,
                                 color: Colors.grey[600],
-                                size: 40,
+                                size: 48,
                               ),
                             ),
                           );
@@ -101,11 +106,13 @@ class _ProductGridCardWidgetState extends State<ProductGridCardWidget>
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
                           return Container(
-                            color: isDark ? Colors.grey[800] : Colors.grey[300],
+                            width: double.infinity,
+                            height: 170,
+                            color: isDark ? Colors.grey[800] : Colors.grey[200],
                             child: Center(
                               child: SizedBox(
-                                width: 30,
-                                height: 30,
+                                width: 32,
+                                height: 32,
                                 child: CircularProgressIndicator(
                                   value:
                                       loadingProgress.expectedTotalBytes != null
@@ -113,9 +120,9 @@ class _ProductGridCardWidgetState extends State<ProductGridCardWidget>
                                                   .cumulativeBytesLoaded /
                                               loadingProgress.expectedTotalBytes!
                                           : null,
-                                  strokeWidth: 2,
+                                  strokeWidth: 2.5,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    const Color(0xFF4F46E5).withOpacity(0.6),
+                                    const Color(0xFF4F46E5).withOpacity(0.7),
                                   ),
                                 ),
                               ),
@@ -124,11 +131,16 @@ class _ProductGridCardWidgetState extends State<ProductGridCardWidget>
                         },
                       ),
                     )
-                  : Center(
-                      child: Icon(
-                        Icons.image_not_supported_outlined,
-                        color: Colors.grey[600],
-                        size: 40,
+                  : Container(
+                      width: double.infinity,
+                      height: 170,
+                      color: isDark ? Colors.grey[800] : Colors.grey[200],
+                      child: Center(
+                        child: Icon(
+                          Icons.image_not_supported_outlined,
+                          color: Colors.grey[600],
+                          size: 48,
+                        ),
                       ),
                     ),
             ),
@@ -136,7 +148,7 @@ class _ProductGridCardWidgetState extends State<ProductGridCardWidget>
             /// ===== PRODUCT INFO =====
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -162,7 +174,7 @@ class _ProductGridCardWidgetState extends State<ProductGridCardWidget>
                           ),
                     ),
 
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
 
                     /// Action Buttons (Edit & Delete)
                     Row(
